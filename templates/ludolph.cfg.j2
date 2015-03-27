@@ -1,0 +1,139 @@
+[global]
+# Run in background as daemon
+daemon = {{ ludolph_daemon }}
+
+# PID file location. Required in daemon mode
+{% if ludolph_daemon == True and ludolph_pidfile is defined and ludolph_pidfile %}
+pidfile = {{ ludolph_pidfile }}
+{% else %}
+# pidfile = /var/run/ludolph.pid
+{% endif %}
+
+# Log file (required)
+# Empty value means logging to stdout
+logfile = {{ ludolph_logfile }}
+
+# Log level (required)
+loglevel = {{ ludolph_loglevel }}
+
+[webserver]
+# Start web server listening on host:port. Needed for webhooks functionality.
+# Setting host or port to empty value will completely disable the web server.
+host = {{ ludolph_webserver_host }}
+port = {{ ludolph_webserver_port }}
+
+[cron]
+# Enable cron scheduler process. Needed for cronjob functionality.
+enabled = {{ ludolph_cron_enable }}
+
+[xmpp]
+# Jabberbot nick name
+nick = {{ ludolph_nick }}
+
+# Username used for jabberbot to login (required)
+username = {{ ludolph_xmpp_username }}
+
+# Password used for jabberbot to login (required)
+password = {{ ludolph_xmpp_password }}
+
+# Jabber server address (default: using SRV DNS lookup to determine the host)
+{% if ludolph_xmpp_host is defined and ludolph_xmpp_host %}
+host = {{ ludolph_xmpp_host }}
+{% else %}
+#host = xmpp.example.com
+{% endif %}
+
+# Jabber server port (default: 5222)
+{% if ludolph_xmpp_port is defined and ludolph_xmpp_port %}
+port = {{ ludolph_xmpp_port }}
+{% else %}
+#port = 5222
+{% endif %}
+
+# Use TLS (default: true)
+{% if ludolph_xmpp_use_tls == True %}
+tls = {{ ludolph_xmpp_use_tls }}
+{% else %}
+#tls = true
+{% endif %}
+
+# Use SSL (default: false)
+{% if ludolph_xmpp_use_ssl == True %}
+ssl = {{ ludolph_xmpp_use_ssl }}
+{% else %}
+#ssl = false
+{% endif %}
+
+# Using OpenFire server with SSL (disabled by default)
+{% if ludolph_xmpp_use_sslv3 == True %}
+sslv3 = {{ ludolph_xmpp_use_sslv3 }}
+{% else %}
+#sslv3 = False
+{% endif %}
+
+# Comma-separated list of user jabber IDs.
+# Users are authorized to run regular Ludolph commands.
+# Leaving this option empty means that everybody is allowed to run Ludolph commands.
+users = {{ ludolph_xmpp_users | join(',') }}
+
+# Comma-separated list of admin jabber IDs.
+# Only admin is authorized to remove other users from Ludolph's roster.
+# Leave this option empty to grant roster operations to everybody.
+# You can use @users keyword here.
+admins = {{ ludolph_xmpp_admins | join(',') }}
+
+# Name of the Multi-User Chat room.
+# Leaving this option empty will disable MUC.
+{% if ludolph_xmpp_muc is defined and ludolph_xmpp_muc %}
+root = {{ ludolph_xmpp_muc }}
+{% else %}
+#room =
+{% endif %}
+
+# Comma-separated list of room user jabber IDs.
+# Room users are authorized to access the MUC room.
+# Leaving this option empty means that everybody is allowed to access the room.
+# You can use @users or @admins keywords here.
+{% if ludolph_xmpp_room_users is defined and ludolph_xmpp_room_users %}
+room_users = {{ ludolph_xmpp_room_users | join(',') }}
+{% else %}
+#room_users =
+{% endif %}
+
+# Comma-separated list of room admin jabber IDs.
+# Room admins get privileges associated with the "admin" affiliation.
+# You can use @users, @admins or @room_users keywords here.
+{% if ludolph_xmpp_room_admins is defined and ludolph_xmpp_room_admins %}
+room_admins = {{ ludolph_xmpp_room_users | join(',') }}
+{% else %}
+#room_admins =
+{% endif %}
+
+
+###############################################################################
+# Ludolph Plugins. You can enable plugins by uncommenting a configuration section.
+###############################################################################
+
+# Ludolph base commands
+[base]
+{% if ludolph_plugin_base_avatar_dir is defined and ludolph_plugin_base_avatar_dir %}
+# Absolute path to directory with avatars
+avatar_dir = {{ ludolph_plugin_base_avatar_dir }}
+
+{% endif %}
+{% if ludolph_plugin_zabbix_enable == True %}
+# Zabbix plugin
+#[zabbix]
+# Zabbix server URI
+server = {{ ludolph_plugin_zabbix_server_url }}
+
+# Zabbix credentials
+username = {{ ludolph_plugin_zabbix_username }}
+password = {{ ludolph_plugin_zabbix_password }}
+
+{% if ludolph_plugin_zabbix_http_authentication == True %}
+# HTTP authetication
+httpuser = {{ ludolph_plugin_zabbix_http_username }}
+httppasswd = {{ ludolph_plugin_zabbix_http_password }}
+{% endif %}
+{% endif %}

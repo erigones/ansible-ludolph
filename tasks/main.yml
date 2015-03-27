@@ -1,0 +1,36 @@
+---
+- name: Create Ludolph service group
+  group: name={{ ludolph_group }}
+         state=present
+  tags: ludolph
+
+- name: Create Ludolph service user
+  user: name={{ ludolph_user }}
+        group={{ ludolph_group }}
+        home={{ ludolph_homedir }}
+        shell={{ ludolph_shell }}
+  tags: ludolph
+
+- name: Install Ludolph
+  pip: name=ludolph state=latest
+  tags: ludolph
+
+- name: Create Ludolph configuration file
+  template: src=ludolph.cfg.j2
+            dest=/etc/ludolph.cfg
+            owner=root
+            group=root
+            mode=0644
+  tags: ludolph
+
+- name: Create Ludolph startup script
+  template: src=ludolph.redhat.j2
+            dest=/etc/init.d/ludolph
+            owner=root
+            group=root
+            mode=0755
+  tags: ludolph
+
+- name: Ensure Ludolph is running
+  service: name=ludolph state=started enabled=yes
+  tags: ludolph
