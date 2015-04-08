@@ -57,6 +57,8 @@ ludolph_plugin_zabbix_http_authentication: False
 
 ludolph_plugin_zabbix_http_username: zabbix
 ludolph_plugin_zabbix_http_password: zabbix
+
+ludolph_service_enabled: True
 ```
 
 Example Playbook
